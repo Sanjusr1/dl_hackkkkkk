@@ -36,6 +36,32 @@ space seen so far — masking logits to the current task would report
 "task-incremental" accuracy, which is much higher and not something a deployed
 system can do.
 
+## Architecture
+
+```mermaid
+flowchart TD
+    A["AIDERv2 Dataset<br/>Flood, Fire, Earthquake, Normal"] --> B["Data Preparation<br/>Resize images and clean folder layout"]
+    B --> C["Continual Learning Scenario Builder"]
+    C --> D1["Task 0<br/>Flood + Earthquake"]
+    C --> D2["Task 1<br/>Fire"]
+    C --> D3["Task 2<br/>Normal"]
+    D1 --> E["Training Pipeline"]
+    D2 --> E
+    D3 --> E
+    E --> F["ResNet18 Backbone"]
+    F --> G["Growing Cosine Classifier Head"]
+    G --> H1["Finetune"]
+    G --> H2["DER++"]
+    G --> H3["Joint"]
+    H1 --> I["Evaluation"]
+    H2 --> I
+    H3 --> I
+    I --> J["Metrics and Plots"]
+    J --> K["Frontend Dashboard"]
+```
+
+Full architecture notes are in [`docs/architecture.md`](docs/architecture.md).
+
 ## Methods
 
 All nine share an identical stream, augmentation and optimiser, so the only
