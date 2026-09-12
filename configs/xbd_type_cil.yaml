@@ -1,0 +1,35 @@
+# xBD, class-incremental over DISASTER TYPES (flood, fire, hurricane,
+# earthquake, tsunami, volcano, tornado). The headline experiment: each task
+# introduces disaster types the model has never seen.
+_base_: base.yaml
+
+data:
+  name: xbd_patches
+  root: data/xbd_types       # <disaster_type>/*.png  (one folder per type)
+  image_size: 128
+  test_fraction: 0.2
+  num_workers: 4
+  domain_from: none
+  max_per_class: 3000
+
+scenario:
+  type: class_incremental
+  num_tasks: 4
+  shuffle_classes: true
+
+model:
+  backbone: resnet18
+  pretrained: true
+  head: cosine
+
+train:
+  epochs: 10
+  batch_size: 64
+  lr: 0.0005
+
+method:
+  name: derpp
+  params:
+    buffer_size: 1000
+    alpha: 0.5
+    beta: 0.5

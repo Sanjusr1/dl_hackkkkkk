@@ -1,0 +1,11 @@
+# Same protocol, shrunk for a free-tier GPU or an impatient debugging loop.
+# Expect a few points below the full config -- use it to iterate, not to report.
+_base_: aiderv2_cil.yaml
+
+data:
+  image_size: 128
+  max_per_class: 1200
+
+train:
+  epochs: 6
+  batch_size: 64

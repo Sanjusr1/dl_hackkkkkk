@@ -1,0 +1,43 @@
+# Shared defaults. Concrete experiment configs set `_base_: base.yaml` and
+# override only what changes, so every comparison differs in one axis at a time.
+seed: 0
+device: auto
+output_dir: runs
+eval_future_tasks: true      # needed for forward transfer; costs one extra eval pass
+
+data:
+  name: synthetic
+  root: data/synthetic
+  image_size: 64
+  test_fraction: 0.2
+  num_workers: 0
+
+scenario:
+  type: class_incremental
+  num_tasks: 3
+  shuffle_classes: true
+  class_order_seed: null     # null -> tie class order to the run seed
+
+model:
+  backbone: resnet18
+  pretrained: true
+  head: cosine               # cosine head removes task-recency norm bias
+  dropout: 0.0
+
+train:
+  epochs: 10
+  batch_size: 32
+  eval_batch_size: 64
+  lr: 0.001
+  backbone_lr_scale: 0.1     # pretrained features drift less at a lower LR
+  weight_decay: 0.0005
+  optimizer: adam
+  scheduler: cosine
+  grad_clip: 1.0
+
+method:
+  name: derpp
+  params:
+    buffer_size: 500
+    alpha: 0.5
+    beta: 0.5

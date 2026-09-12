@@ -1,0 +1,43 @@
+# SECONDARY / ABLATION -- domain-incremental over SIMULATED acquisition shift.
+#
+# AIDERv2 carries no event or sensor metadata, so this stream is built by
+# partitioning (not duplicating) each class across three simulated conditions:
+# clear nadir, dusk haze, low-res oblique. Build with:
+#   python scripts/prepare_aiderv2.py --src raw_aiderv2 --dst data/aiderv2 \
+#       --resize 256 --simulate-domains
+#
+# Honest framing for the report: this measures robustness to photometric and
+# resolution shift with a FIXED label space. It is a proxy for "new event, known
+# taxonomy". Real per-event streams need xBD; see xbd_damage_dil.yaml.
+_base_: base.yaml
+
+data:
+  name: folder
+  root: data/aiderv2_shift
+  image_size: 224
+  num_workers: 4
+  domain_from: parent
+  use_official_splits: true
+
+scenario:
+  type: domain_incremental
+  num_tasks: 3
+  shuffle_classes: true        # here this shuffles the EVENT order
+
+model:
+  backbone: resnet18
+  pretrained: true
+  head: linear                 # fixed label space: no recency bias to correct
+
+train:
+  epochs: 10
+  batch_size: 64
+  lr: 0.0005
+  backbone_lr_scale: 0.1
+
+method:
+  name: derpp
+  params:
+    buffer_size: 500
+    alpha: 0.5
+    beta: 0.5

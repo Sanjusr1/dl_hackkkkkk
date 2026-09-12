@@ -1,0 +1,37 @@
+# xBD / xView2 building-damage grading, one task per disaster EVENT.
+# Label space is fixed (no-damage / minor / major / destroyed); each event is a
+# new domain. Build with:
+#   python scripts/prepare_xbd.py --xbd-root <xBD> --dst data/xbd_patches
+_base_: base.yaml
+
+data:
+  name: xbd_patches
+  root: data/xbd_patches     # <event>/<damage_class>/*.png
+  image_size: 128
+  test_fraction: 0.2
+  num_workers: 4
+  domain_from: parent
+  max_per_class: 4000        # cap the dominant no-damage class
+
+scenario:
+  type: domain_incremental
+  num_tasks: 6               # 6 events in sequence
+  shuffle_classes: true      # shuffles event order under the run seed
+
+model:
+  backbone: resnet18
+  pretrained: true
+  head: linear
+
+train:
+  epochs: 10
+  batch_size: 64
+  lr: 0.0005
+  backbone_lr_scale: 0.1
+
+method:
+  name: derpp
+  params:
+    buffer_size: 2000
+    alpha: 0.5
+    beta: 0.5

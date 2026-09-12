@@ -1,0 +1,26 @@
+# Domain-incremental: same 6 labels, three simulated "events" with different
+# sensor/season colour statistics. This is the Rasuwa case -- a known disaster
+# taxonomy, a new acquisition.
+_base_: base.yaml
+
+data:
+  name: synthetic
+  root: data/synthetic
+  image_size: 64
+  synthetic_per_class: 120
+  domain_from: parent
+
+scenario:
+  type: domain_incremental
+  num_tasks: 3
+  shuffle_classes: false     # keep event order deterministic
+
+model:
+  backbone: smallcnn
+  pretrained: false
+  head: linear               # fixed label space: no recency bias to correct
+
+train:
+  epochs: 5
+  lr: 0.002
+  backbone_lr_scale: 1.0

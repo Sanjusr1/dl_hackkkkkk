@@ -1,0 +1,47 @@
+# PRIMARY EXPERIMENT -- AIDERv2, class-incremental over disaster types.
+#
+# Corpus: 16,723 UAV/aerial images, 4 classes (earthquake, flood, fire, normal),
+# official split 13,399 / 1,670 / 1,654. Prepare with:
+#   python scripts/prepare_aiderv2.py --src raw_aiderv2 --dst data/aiderv2 --resize 256
+#
+# With 4 classes the stream is 3 tasks of sizes [2, 1, 1]. The first task gets
+# two classes on purpose: a single-class task makes cross-entropy degenerate.
+# `shuffle_classes` ties the class ORDER to the run seed, so sweeping seeds
+# sweeps orders -- essential here, because with only 3 tasks the order is the
+# dominant source of variance. Report mean +/- std over >= 5 seeds.
+_base_: base.yaml
+
+data:
+  name: folder
+  root: data/aiderv2
+  image_size: 224
+  num_workers: 4
+  domain_from: none
+  use_official_splits: true    # honour the corpus's own train/val/test
+
+scenario:
+  type: class_incremental
+  num_tasks: 3                 # -> [2, 1, 1] classes
+  shuffle_classes: true
+  class_order_seed: null       # null = follow the run seed
+
+model:
+  backbone: resnet18
+  pretrained: true             # ImageNet init; `frozen` baseline quantifies its share
+  head: cosine
+
+train:
+  epochs: 12
+  batch_size: 64
+  lr: 0.0005
+  backbone_lr_scale: 0.1
+  weight_decay: 0.0005
+  optimizer: adam
+  scheduler: cosine
+
+method:
+  name: derpp
+  params:
+    buffer_size: 500           # ~3.7% of the training set
+    alpha: 0.5
+    beta: 0.5

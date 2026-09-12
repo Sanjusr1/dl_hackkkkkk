@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+data/
+runs/
+raw_aiderv2/
+*.zip
+.ipynb_checkpoints/
+frontend/index.html

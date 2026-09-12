@@ -1,0 +1,29 @@
+# Fast sanity scenario: 6 synthetic disaster classes, 3 tasks of 2 classes.
+# Runs on CPU in minutes with no downloads -- use it to verify a method before
+# spending GPU hours on the real corpus.
+_base_: base.yaml
+
+data:
+  name: synthetic
+  root: data/synthetic
+  image_size: 64
+  synthetic_per_class: 120
+  domain_from: none          # single domain: isolate class-incremental effects
+
+scenario:
+  type: class_incremental
+  tasks:
+    - [normal, flood]                  # T0: baseline + the Nepal-style event
+    - [wildfire, earthquake_damage]    # T1
+    - [landslide, storm_damage]        # T2
+
+model:
+  backbone: smallcnn
+  pretrained: false
+  head: cosine
+
+train:
+  epochs: 5
+  batch_size: 32
+  lr: 0.002
+  backbone_lr_scale: 1.0
