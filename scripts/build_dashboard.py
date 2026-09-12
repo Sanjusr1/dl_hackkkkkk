@@ -71,23 +71,23 @@ def main() -> None:
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DACL Results Dashboard</title>
   <style>
-    body {{ margin: 0; font-family: Arial, sans-serif; background: #f5f7fb; color: #172033; }}
-    header {{ background: #172033; color: white; padding: 32px 48px; }}
+    body {{ margin: 0; font-family: Arial, sans-serif; background: #1f2328; color: #f8fafc; }}
+    header {{ background: #0f766e; color: white; padding: 32px 48px; }}
     h1 {{ margin: 0 0 8px; font-size: 34px; }}
     header p {{ margin: 0; color: #cbd5e1; }}
     main {{ padding: 28px 48px 48px; }}
     .cards {{ display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }}
-    .card {{ background: white; border: 1px solid #dde3ee; border-radius: 8px; padding: 18px; }}
-    .card span {{ display: block; color: #667085; font-size: 13px; margin-bottom: 8px; }}
+    .card {{ background: #111827; border: 1px solid #2dd4bf; border-radius: 8px; padding: 18px; }}
+    .card span {{ display: block; color: #99f6e4; font-size: 13px; margin-bottom: 8px; }}
     .card strong {{ font-size: 22px; }}
-    table {{ width: 100%; border-collapse: collapse; background: white; border: 1px solid #dde3ee; margin-bottom: 28px; }}
-    th, td {{ padding: 12px 14px; border-bottom: 1px solid #e8edf5; text-align: right; white-space: nowrap; }}
+    table {{ width: 100%; border-collapse: collapse; background: #111827; border: 1px solid #2dd4bf; margin-bottom: 28px; }}
+    th, td {{ padding: 12px 14px; border-bottom: 1px solid #374151; text-align: right; white-space: nowrap; }}
     th:first-child {{ text-align: left; }}
-    thead {{ background: #edf2f7; }}
+    thead {{ background: #0f766e; color: white; }}
     .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; }}
-    figure {{ margin: 0; background: white; border: 1px solid #dde3ee; border-radius: 8px; padding: 12px; }}
+    figure {{ margin: 0; background: #111827; border: 1px solid #2dd4bf; border-radius: 8px; padding: 12px; }}
     img {{ width: 100%; height: auto; display: block; }}
-    figcaption {{ margin-top: 10px; color: #667085; font-size: 13px; }}
+    figcaption {{ margin-top: 10px; color: #99f6e4; font-size: 13px; }}
     @media (max-width: 760px) {{ header, main {{ padding-left: 18px; padding-right: 18px; }} .cards {{ grid-template-columns: 1fr; }} table {{ font-size: 12px; }} }}
   </style>
 </head>
