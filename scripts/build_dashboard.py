@@ -33,6 +33,13 @@ def mean_metric(summary: dict, method: str, key: str) -> float:
     return statistics.mean(vals) if vals else float("-inf")
 
 
+def improvement(summary: dict, better: str, baseline: str, key: str) -> str:
+    if better not in summary or baseline not in summary:
+        return "n/a"
+    gain = (mean_metric(summary, better, key) - mean_metric(summary, baseline, key)) * 100
+    return f"{gain:+.1f} points"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--summary", default="runs/benchmark/summary.json")
@@ -48,6 +55,13 @@ def main() -> None:
     summary = json.loads(summary_path.read_text())
     best_acc = max(summary, key=lambda m: mean_metric(summary, m, "final_average_accuracy"))
     lowest_forget = min(summary, key=lambda m: mean_metric(summary, m, "forgetting"))
+    derpp_acc_gain = improvement(summary, "derpp", "finetune", "final_average_accuracy")
+    derpp_f1_gain = improvement(summary, "derpp", "finetune", "final_macro_f1")
+    forget_drop = "n/a"
+    if "derpp" in summary and "finetune" in summary:
+        forget_drop = (
+            f"{(mean_metric(summary, 'finetune', 'forgetting') - mean_metric(summary, 'derpp', 'forgetting')) * 100:.1f} points"
+        )
 
     rows = []
     for method, metrics in summary.items():
@@ -80,6 +94,10 @@ def main() -> None:
     .card {{ background: #111827; border: 1px solid #2dd4bf; border-radius: 8px; padding: 18px; }}
     .card span {{ display: block; color: #99f6e4; font-size: 13px; margin-bottom: 8px; }}
     .card strong {{ font-size: 22px; }}
+    .insights {{ display: grid; grid-template-columns: repeat(3, minmax(180px, 1fr)); gap: 16px; margin: 8px 0 28px; }}
+    .insight {{ background: #111827; border-left: 4px solid #2dd4bf; padding: 16px; }}
+    .insight h3 {{ margin: 0 0 8px; font-size: 16px; }}
+    .insight p {{ margin: 0; color: #d1d5db; line-height: 1.45; }}
     table {{ width: 100%; border-collapse: collapse; background: #111827; border: 1px solid #2dd4bf; margin-bottom: 28px; }}
     th, td {{ padding: 12px 14px; border-bottom: 1px solid #374151; text-align: right; white-space: nowrap; }}
     th:first-child {{ text-align: left; }}
@@ -88,7 +106,7 @@ def main() -> None:
     figure {{ margin: 0; background: #111827; border: 1px solid #2dd4bf; border-radius: 8px; padding: 12px; }}
     img {{ width: 100%; height: auto; display: block; }}
     figcaption {{ margin-top: 10px; color: #99f6e4; font-size: 13px; }}
-    @media (max-width: 760px) {{ header, main {{ padding-left: 18px; padding-right: 18px; }} .cards {{ grid-template-columns: 1fr; }} table {{ font-size: 12px; }} }}
+    @media (max-width: 760px) {{ header, main {{ padding-left: 18px; padding-right: 18px; }} .cards, .insights {{ grid-template-columns: 1fr; }} table {{ font-size: 12px; }} }}
   </style>
 </head>
 <body>
@@ -101,6 +119,20 @@ def main() -> None:
       <div class="card"><span>Dataset</span><strong>AIDERv2</strong></div>
       <div class="card"><span>Best Final ACC</span><strong>{html.escape(best_acc)}</strong></div>
       <div class="card"><span>Lowest Forgetting</span><strong>{html.escape(lowest_forget)}</strong></div>
+    </section>
+    <section class="insights">
+      <div class="insight">
+        <h3>Problem Found</h3>
+        <p>Naive fine-tuning learns new disaster classes but loses performance on earlier tasks.</p>
+      </div>
+      <div class="insight">
+        <h3>Continual Learning Gain</h3>
+        <p>DER++ improves final accuracy by {html.escape(derpp_acc_gain)} and Macro-F1 by {html.escape(derpp_f1_gain)} over fine-tuning.</p>
+      </div>
+      <div class="insight">
+        <h3>Forgetting Reduced</h3>
+        <p>DER++ reduces forgetting by {html.escape(forget_drop)} compared with the fine-tuning baseline.</p>
+      </div>
     </section>
     <h2>Benchmark Results</h2>
     <table>
