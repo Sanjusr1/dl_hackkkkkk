@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if command -v python3 >/dev/null 2>&1; then
-  python3 run_project.py "$@"
+if command -v python3.12 >/dev/null 2>&1; then
+  PY=python3.12
+elif command -v python3.11 >/dev/null 2>&1; then
+  PY=python3.11
+elif command -v python3 >/dev/null 2>&1; then
+  PY=python3
 else
-  python run_project.py "$@"
+  PY=python
 fi
+
+"$PY" -m pip install -q -r requirements.txt
+"$PY" run_project.py "$@"
