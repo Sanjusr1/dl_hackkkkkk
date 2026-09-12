@@ -115,7 +115,8 @@ def main() -> None:
         "--seeds",
         *args.seeds,
     ])
-    run([sys.executable, "scripts/plot_results.py", "--runs", "runs/benchmark/*", "--out", "figures/"])
+    run_dirs = sorted(str(p) for p in (ROOT / "runs" / "benchmark").iterdir() if p.is_dir())
+    run([sys.executable, "scripts/plot_results.py", "--runs", *run_dirs, "--out", "figures/"])
     run([sys.executable, "scripts/build_dashboard.py", "--summary", "runs/benchmark/summary.json", "--figures", "figures", "--out", "frontend/index.html"])
     print("\nDone. Open frontend/index.html and use runs/benchmark/summary.json for the report.")
 
