@@ -120,6 +120,18 @@ Outputs:
 - `figures/` — accuracy matrices, retention curves, comparison plots
 - `frontend/index.html` — presentation dashboard
 
+To view the dashboard on localhost after a run:
+
+```bash
+bash dashboard.sh
+```
+
+Then open:
+
+```text
+http://localhost:8000/frontend/index.html
+```
+
 ## Real data — AIDERv2
 
 16,723 aerial images, 4 classes (earthquake/collapsed building, flood, fire,
