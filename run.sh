@@ -11,5 +11,11 @@ else
   PY=python
 fi
 
-"$PY" -m pip install -q -r requirements.txt
-"$PY" run_project.py "$@"
+if [ ! -d ".venv" ]; then
+  "$PY" -m venv .venv
+fi
+
+. .venv/bin/activate
+python -m pip install -q --upgrade pip
+python -m pip install -q -r requirements.txt
+python run_project.py "$@"
